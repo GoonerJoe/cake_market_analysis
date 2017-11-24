@@ -1,0 +1,20 @@
+shops = new_data[['分类']].dropna()
+shops = shops.groupby('分类').size().sort_values(ascending = False)
+shops = pd.DataFrame(shops)
+shops = shops.rename(columns = {0:'数量'})
+
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+
+index = np.arange(len(shops.index))
+number = np.array(shops.数量.tolist())
+plt.bar(index,shops['数量'],color = 'c')
+plt.xticks(index,shops.index)
+plt.yticks(np.arange(0,1100,200))
+for a,b in zip(index,number):
+    plt.text(a,b+0.5,'%.0f' % b,ha = 'center',va = 'bottom')
+plt.title('店铺数量')
+plt.savefig('店铺数量.png',dpi = 400)
