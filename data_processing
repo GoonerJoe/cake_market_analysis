@@ -1,0 +1,58 @@
+#读取文件
+shop_details = read_excel(
+        'C:\\Users\\think\\Desktop\\大众点评蛋糕\\蛋糕+烘焙+甜点.xlsx',
+      sheetname = 'Sheet1')
+
+#删除重复行
+clean_data = shop_details.drop_duplicates(subset=['店铺名称','地点','地址'])
+
+#对索引重新排列
+clean_data = clean_data.reset_index(drop = True)
+
+#将点评数格式统一
+clean_data['点评数'] = clean_data['点评数'].str.replace('条评论','')
+
+#将人均消费格式统一
+clean_data['人均'] = clean_data['人均'].str.replace('￥','')
+clean_data['人均'] = clean_data['人均'].str.replace('人均：','')
+clean_data['人均'] = clean_data['人均'].str.replace('元','')
+
+#将列名网有点评改为网友点评
+clean_data.rename(columns={'网有点评':'网友点评'},inplace = True)
+
+comments = clean_data['网友点评']
+comments = comments.str.split('  ',10,expand = True)
+
+#将一些特定分类的行提取出来，进行下一步分析
+lst = ['面包甜点','DIY手工坊','婚礼小商品','兴趣生活','亲子玩乐',
+       '职业技术','更多教育培训','亲子游乐','更多亲子服务','花店']
+lst1=[]
+
+lst2 = []
+
+categroies = clean_data[['分类']].groupby(by = ['分类']).size().sort_values(ascending = False)
+
+for x in categroies.index:
+    if x in lst:
+        lst1.append(clean_data[clean_data.分类 == x].index.tolist())
+for x in lst1:
+    for y in x:
+       lst2.append(y)
+                
+new_data = clean_data.ix[lst2]
+
+#将分类更加细化，亲子类合并，职业技术类合并，婚礼小礼品类合并
+new_data['分类'] = new_data['分类'].str.replace('亲子游乐','亲子玩乐')
+new_data['分类'] = new_data['分类'].str.replace('更多亲子服务','亲子玩乐')
+new_data['分类'] = new_data['分类'].str.replace('婚礼小商品','婚礼蛋糕')
+new_data['分类'] = new_data['分类'].str.replace('花店','婚礼蛋糕')
+new_data['分类'] = new_data['分类'].str.replace('更多教育培训','职业技术')
+
+#将索引重新编号
+new_data = new_data.reset_index(drop = True)
+
+#将口味，环境，服务规整
+new_data['口味'] = new_data['口味'].str.replace('口味：','')
+new_data['环境'] = new_data['环境'].str.replace('环境：','')
+new_data['服务'] = new_data['服务'].str.replace('服务：','')
+new_data['口味'] = new_data['口味'].str.replace('产品：','')
