@@ -1,0 +1,65 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+from pandas import Series,DataFrame
+from pandas import read_excel
+import matplotlib
+import jieba
+import jieba.analyse
+from wordcloud import WordCloud
+import random
+from scipy.misc import imread
+
+#面包甜点
+
+bread_dessert = new_data[new_data['分类'] == '面包甜点']
+bread_dessert = bread_dessert.groupby(by = '地点')['地点'].agg({
+        '数量':np.size}).sort_values(by='数量',ascending = False)
+bread_dessert = bread_dessert[bread_dessert.数量 >= 15]
+
+index = np.arange(len(bread_dessert.index))
+number = np.array(list(bread_dessert.数量))
+plt.bar(index,bread_dessert['数量'],color = 'lime')
+plt.xticks(index,bread_dessert.index,rotation = 90)
+for a,b in zip(index,number):
+    plt.text(a,b+0.5,'%.0f' % b,ha = 'center',va = 'bottom')
+plt.title('面包甜点地点分布')
+plt.savefig('面包甜点地点分布.png',dpi = 400)
+
+#DIY手工坊
+diy = new_data[new_data['分类'] == 'DIY手工坊']
+diy = diy.groupby(by = '地点')['地点'].agg({
+        '数量':np.size}).sort_values(by='数量',ascending = False)
+diy = diy[diy.数量 >= 3]
+
+index = np.arange(len(diy.index))
+number = np.array(list(diy.数量))
+plt.figure(figsize = (15,15))
+plt.bar(index,diy['数量'],color = 'cornflowerblue')
+plt.xticks(index,diy.index,rotation = 90)
+for a,b in zip(index,number):
+    plt.text(a,b+0.1,'%.0f' % b,ha = 'center',va = 'bottom')
+plt.title('DIY手工坊地点分布')
+plt.savefig('DIY手工坊地点分布.png',dpi = 400)
+
+#'兴趣生活', '婚礼蛋糕', '亲子玩乐', '职业技术'
+new_data.分类.unique()
+lst = ['兴趣生活', '婚礼蛋糕', '亲子玩乐', '职业技术']
+lst_1 = []
+lst_2 = []
+
+for index,row in new_data.iterrows():
+    category = row['分类']
+    loction = row['地点']
+    for x in lst:
+        if x == category:
+            lst_1.append(category)
+            lst_2.append(loction)
+            
+other = pd.DataFrame({'分类':lst_1,
+                      '地点':lst_2})
+
+group = other.groupby(by = '分类')
+    
+for x in group.groups:
+    print(x)
