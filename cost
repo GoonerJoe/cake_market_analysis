@@ -1,0 +1,36 @@
+new_data = new_data.replace({'null':np.nan})
+new_data = new_data.replace({'-':np.nan})
+cost = new_data.dropna(subset = ['人均'],axis = 0)
+cost['人均']  = cost['人均'].str.replace('消费：','')
+cost['人均']  = cost['人均'].astype('int32')
+
+cost = cost.groupby(by = '分类')['人均'].agg({
+        '数量':np.average})
+    
+cost = cost.rename(columns = {'数量':'人均消费'})
+
+index = np.arange(len(cost.index))
+number = np.array(list(cost.人均消费))
+plt.figure(figsize = (15,15))
+plt.bar(index,cost['人均消费'],color = 'aqua',width = 0.5)
+plt.xticks(index,cost.index,rotation = 90)
+for a,b in zip(index,number):
+    plt.text(a,b+10,'%.1f' % b,ha = 'center',va = 'bottom')
+plt.title('人均消费')
+plt.savefig('人均消费.png',dpi = 400)
+
+
+cake_cost = cost[cost['分类'] == '面包甜点']
+plt.hist(cake_cost.人均,bins = 6,color = 'mediumpurple')
+plt.title('面包甜品人均消费')
+plt.savefig('面包甜品人均消费.png',dpi = 400)
+
+diy_cost = cost[cost['分类'] == 'DIY手工坊']
+plt.hist(diy_cost.人均,bins = 6,color = 'deepskyblue')
+plt.title('DIY手工坊人均消费')
+plt.savefig('DIY手工坊人均消费.png',dpi = 400)
+
+wedding_cost = cost[cost['分类'] == '婚礼蛋糕']
+plt.hist(wedding_cost.人均,bins = 3,color = 'orange')
+plt.title('婚礼蛋糕人均消费')
+plt.savefig('婚礼蛋糕人均消费.png',dpi = 400)
