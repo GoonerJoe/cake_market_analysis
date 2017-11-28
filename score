@@ -1,0 +1,61 @@
+cake_score = new_data[new_data['分类'] == '面包甜点']   
+diy_score = new_data[new_data['分类'] == 'DIY手工坊']   
+types = ['面包甜点','DIY手工坊']
+index = new_data[(new_data['分类'] == 'DIY手工坊') | (new_data['分类'] == '面包甜点')].index 
+other_score = new_data.drop(labels = index,axis = 0)       
+
+
+
+cake_score['评分'] = cake_score['评分'].str.replace('商户','')
+cake_score['评分'] = cake_score['评分'].str.replace('该','')
+cake_score = cake_score.groupby(by = '评分')['分类'].agg({
+        '数量':np.size})
+
+colors = ['gold','salmon','royalblue','violet','silver','lime','peru']
+plt.axis('equal')
+plt.pie(
+    cake_score['数量'], 
+    labels=cake_score.index, 
+    autopct='%.2f%%',
+    colors = colors
+    #explode = expl
+)  
+plt.title('面包甜点评分')
+plt.savefig('面包甜点评分.png', dpi=400)
+
+
+new_data['评分'] = new_data['评分'].str.replace('商户','')
+new_data['评分'] = new_data['评分'].str.replace('该','')
+diy_score = diy_score.groupby(by = '评分')['分类'].agg({
+        '数量':np.size})
+plt.axis('equal')
+plt.pie(
+    diy_score['数量'], 
+    labels=diy_score.index, 
+    autopct='%.2f%%',
+    colors = color
+    #explode = expl
+)  
+plt.title('DIY手工坊评分')
+plt.savefig('DIY手工坊评分.png', dpi=400) 
+    
+
+other = other_score.groupby(by = '分类')
+
+i = 0
+plt.figure(figsize = (10,10))
+for x in other.groups:
+    subdata = other.get_group(x).groupby(by = '评分')['评分'].agg({
+            '数量':np.size})
+    i = i + 1
+    plt.subplot(2,2,i)
+    plt.axis('equal')
+    plt.pie(
+    subdata['数量'], 
+    labels=subdata.index, 
+    autopct='%.2f%%',
+    #explode = expl
+)
+    plt.title(str(x)+'评分')
+    plt.subplots_adjust(top = 1 , right = 1)
+plt.savefig('其他类评分.png', dpi=400)
