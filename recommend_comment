@@ -1,0 +1,156 @@
+cake_comment = new_data[new_data.分类 == '面包甜点']
+cake_comment = cake_comment['网友点评'].dropna()
+
+cake_comment = cake_comment.str.split('  ',20,expand = True)
+
+cake_comment = cake_comment.drop(labels = 5 , axis = 1)
+
+dic = dict(zip(cake_comment.columns,list(np.arange(0,11))))
+
+cake_comment = cake_comment.rename(columns = dic)
+
+lst = []
+lst1 = []
+
+for x in cake_comment.columns:
+    comment = cake_comment[x].str.split('(',2,expand = True)
+    comment[1] = comment[1].str.replace(')','')
+    comment = comment.dropna()
+    comment[1] = comment[1].astype('int')
+    for index,row in comment.iterrows():
+        content = row[0]
+        number = row[1]        
+        lst.append(content)
+        lst1.append(number)
+        
+cake_comment = pd.DataFrame({'关键词':lst, '数量': lst1})        
+        
+cake_comment = cake_comment.groupby( by = '关键词')['数量'].agg({
+        '数量':np.sum})        
+        
+dic = dict(zip(cake_comment.index,cake_comment.数量))        
+        
+img = imread('C:\\Users\\think\\Desktop\\aa.jpg')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=30,background_color='white',
+        mask=img,
+        max_font_size=200,
+        font_step=1)
+wordcloud.generate_from_frequencies(dic)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\DataAnalyse\\面包甜点网友点评.jpg')        
+        
+        
+diy_comment = new_data[new_data.分类 == 'DIY手工坊']
+diy_comment = diy_comment['网友点评'].dropna()        
+        
+diy_comment = diy_comment.str.split('  ',20,expand = True)
+
+diy_comment = diy_comment.drop(labels = 5 , axis = 1)
+
+dic = dict(zip(diy_comment.columns,list(np.arange(0,10))))
+
+diy_comment = diy_comment.rename(columns = dic)
+
+lst = []
+lst1 = []
+
+for x in diy_comment.columns:
+    comment = diy_comment[x].str.split('(',2,expand = True)
+    comment[1] = comment[1].str.replace(')','')
+    comment = comment.dropna()
+    comment[1] = comment[1].astype('int')
+    for index,row in comment.iterrows():
+        content = row[0]
+        number = row[1]        
+        lst.append(content)
+        lst1.append(number)
+        
+diy_comment = pd.DataFrame({'关键词':lst, '数量': lst1})        
+        
+diy_comment = diy_comment.groupby( by = '关键词')['数量'].agg({
+        '数量':np.sum})        
+        
+dic = dict(zip(diy_comment.index,diy_comment.数量))        
+        
+img = imread('C:\\Users\\think\\Desktop\\aa.jpg')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=30,background_color='white',
+        mask=img,
+        max_font_size=200,
+        font_step=1)
+wordcloud.generate_from_frequencies(dic)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\DataAnalyse\\DIY手工坊网友点评.jpg') 
+
+
+cake_recommend = new_data[new_data.分类 == '面包甜点']
+cake_recommend = cake_recommend['推荐菜'].dropna()
+
+cake_recommend = cake_recommend.str.split('    ',25,expand = True)
+
+cake_recommend = cake_recommend.drop(labels = 24 , axis = 1)
+
+for index,row in cake_recommend.iterrows():
+    a = row[7]
+    if '冷' in str(a):
+        print(index)
+        
+for index,row in cake_recommend.iterrows():
+    a = row[18]
+    if '外带' in str(a):
+        print(index)
+        
+for index,row in cake_recommend.iterrows():
+    a = row[21]
+    if '个' in str(a):
+        print(index)
+
+cake_recommend[7] = cake_recommend[7].str.replace('柠檬菜蜜(冷)','柠檬菜蜜')
+
+lst = []
+lst1 = []
+cake_recommend.reset_index(drop = True, inplace = True)
+for x in cake_recommend.columns:
+    print(x)
+    comment = cake_recommend[x].str.split('(',2,expand = True)
+    comment[1] = comment[1].str.replace(')','')
+    comment = comment.dropna()
+    comment[1] = comment[1].astype('int')
+    for index,row in comment.iterrows():
+        content = row[0]
+        number = row[1]        
+        lst.append(content)
+        lst1.append(number)
+        
+cake_recommend = pd.DataFrame({'关键词':lst, '数量': lst1})        
+        
+cake_recommend = cake_recommend.groupby( by = '关键词')['数量'].agg({
+        '数量':np.sum})        
+        
+dic = dict(zip(cake_recommend.index.values,cake_recommend.数量.values))        
+        
+img = imread('C:\\Users\\think\\Desktop\\aa.jpg')
+
+wordcloud = WordCloud(
+        font_path="C:\\Windows\\Fonts\\SIMYOU.TTF",
+        max_words=300,background_color='white',
+        mask=img,
+        max_font_size=100,
+        font_step=1)
+wordcloud.generate_from_frequencies(dic)
+##plt.imshow(wordcloud .recolor(color_func=imagecolor))
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+wordcloud.to_file('C:\\Users\\think\\DataAnalyse\\面包甜点网友推荐.jpg')
