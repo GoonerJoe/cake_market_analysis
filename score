@@ -59,3 +59,89 @@ for x in other.groups:
     plt.title(str(x)+'评分')
     plt.subplots_adjust(top = 1 , right = 1)
 plt.savefig('其他类评分.png', dpi=400)
+
+cake_score = new_data[new_data.分类 == '面包甜点']
+cake_score = cake_score[['口味','服务','环境']].replace({'null':np.nan}).dropna()
+
+for x in cake_score.columns:
+    cake_score[x] = cake_score[x].astype('float')
+
+lst = []
+for index,row in cake_score.iterrows():
+    taste = row['口味']
+    service = row['服务']
+    enviornment = row['环境']
+    if taste == 0.0 or service == 0.0 or enviornment == 0.0:
+        lst.append(index)
+
+cake_score = cake_score.drop(labels = lst, axis = 0)
+
+cake_score = pd.DataFrame(list(np.average(cake_score, axis = 0)))
+cake_score = cake_score.rename(index = {0:'口味',1:'服务',2:'环境'},columns = {0:'平均分'})
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+cake_score.plot(kind = 'bar', color = 'plum')
+plt.yticks(np.arange(0,11))
+x = np.arange(len(cake_score.index))
+y = np.array(cake_score.平均分.tolist())
+for a,b in zip(x,y):
+    plt.text(a,b+0.2,'%.2f' % b,
+             ha = 'center', va = 'bottom',fontsize = 10)
+plt.title('面包甜点平均分')
+plt.savefig('面包甜点平均分.png', dpi=400)
+
+
+wedding_score = new_data[new_data.分类 == '婚礼蛋糕']
+wedding_score = wedding_score[['口味','服务','环境']].replace({'null':np.nan}).dropna()
+for x in wedding_score.columns:
+    wedding_score[x] = wedding_score[x].astype('float')
+
+wedding_score = pd.DataFrame(list(np.average(wedding_score, axis = 0)))
+wedding_score = wedding_score.rename(index = {0:'口味',1:'服务',2:'环境'},columns = {0:'平均分'})
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+wedding_score.plot(kind = 'bar', color = 'lightseagreen')
+plt.yticks(np.arange(0,11))
+x = np.arange(len(wedding_score.index))
+y = np.array(wedding_score.平均分.tolist())
+for a,b in zip(x,y):
+    plt.text(a,b+0.2,'%.2f' % b,
+             ha = 'center', va = 'bottom',fontsize = 10)
+plt.title('婚礼蛋糕平均分')
+plt.savefig('婚礼蛋糕平均分.png', dpi=400)
+
+cake_score = new_data[new_data.分类 == '面包甜点']
+cake_score = cake_score[['口味','服务','环境']].replace({'null':np.nan}).dropna()
+
+for x in cake_score.columns:
+    cake_score[x] = cake_score[x].astype('float')
+
+lst = []
+for index,row in cake_score.iterrows():
+    taste = row['口味']
+    service = row['服务']
+    enviornment = row['环境']
+    if taste == 0.0 or service == 0.0 or enviornment == 0.0:
+        lst.append(index)
+
+cake_score = cake_score.drop(labels = lst, axis = 0)
+
+i=0
+for x in cake_score.columns:
+    i = i+1
+    subdata = cake_score[x]
+    plt.subplot(1,3,i)
+    plt.hist(subdata,bins = 5)
+    plt.title(str(x)+'评分分布')
+    plt.xticks(np.arange(5,11))
+    plt.subplots_adjust(right = 2)
+plt.savefig('面包甜点各项平均分分布.png', dpi=400)
+
+
+
