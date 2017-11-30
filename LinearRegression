@@ -1,0 +1,43 @@
+data = new_data[['口味','环境','服务','评分']]
+score = data['评分'].unique().tolist()
+number = [4,4.5,5,3.5,0,3,2]
+dic = dict(zip(score,number))
+
+data['评分'] = data['评分'].map(dic)
+
+lst = data[data.评分 == 0].index
+data = data.drop(labels = lst, axis = 0)
+data = data.replace({'null':np.nan})
+data = data.replace({0.0:np.nan})
+data = data.dropna()
+
+from pandas.tools.plotting import scatter_matrix;
+font = {
+    'family' : 'SimHei'
+}
+matplotlib.rc('font', **font)
+matplotlib.rcParams['axes.unicode_minus'] = False
+for x in data.columns:
+    data[x] = data[x].astype('float')
+scatter_matrix(
+    data, 
+    figsize=(10, 10), diagonal='kde'
+)
+dCorr = data.corr()
+
+from sklearn.linear_model import LinearRegression
+#建模
+lrModel = LinearRegression()
+
+x = data[['口味','环境','服务']]
+y = data['评分']
+
+lrModel.fit(x, y)
+
+lrModel.score(x, y)
+
+lrModel.predict([[7.5, 7.6,7.5]])
+
+lrModel.coef_
+
+lrModel.intercept_
